@@ -71,10 +71,11 @@ public class InsultModule extends ModuleAbstract implements
 		super(bot);
 		
 		for (String s : new String[]{"!rippy","!clear", "!enable", "!disable", "!warn",
-		"!whatuser -f", "!whatuser", "!whatemail", "!whatnick", ".np", ".compare"})
+		"!unlock", "!what", ".np", ".compare", "dutchdude"})
 		{
 			badwords.add(s);
 		}
+                //nepotism :>
 		badwords.add(bot.getOwner());
 		badwords.add(bot.getOwner()+"_");
 	}
@@ -128,9 +129,9 @@ public class InsultModule extends ModuleAbstract implements
 				if(target.startsWith("!") || target.startsWith("."))
 					target = sender;
 				
-				String[] words = message.trim().toLowerCase().split("\\s");
-				for(String word : words) {
-					if (badwords.contains(word)) {
+				String matchmsg = target.toLowerCase();
+				for (String bad : badwords) {
+					if (matchmsg.contains(bad)) {
 						target = sender;
 						break;
 					}
