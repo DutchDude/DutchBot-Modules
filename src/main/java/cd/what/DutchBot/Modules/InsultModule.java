@@ -131,7 +131,7 @@ public class InsultModule extends ModuleAbstract implements
 				
 				String matchmsg = target.toLowerCase();
 				for (String bad : badwords) {
-					if (matchmsg.contains(bad)) {
+					if (matchmsg.contains(bad.toLowerCase())) {
 						target = sender;
 						break;
 					}
