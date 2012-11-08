@@ -388,7 +388,7 @@ public class LastfmModule extends ModuleAbstract implements
 				PaginatedResult<Track> result = null;
 				Result lastResult = null;
 				try {
-					result = User.getRecentTracks(lastfmnick, 1, 1, apiKey);
+					result = User.getRecentTracks(lastfmnick, 1, 1, true, apiKey);
 					lastResult = Caller.getInstance().getLastResult();
 				} catch (CallException e) {
 					bot.sendMessage(target, "Error: " + e.getMessage());
@@ -458,6 +458,9 @@ public class LastfmModule extends ModuleAbstract implements
 					} else if(fetchedTrack.getUserPlaycount() == 1) {
 						response.append(" (1 play)");
 					}
+
+                    if(t.isLoved())
+                      response.append(" <3");
 
 					// tags
 					Collection<String> tags = fetchedTrack.getTags();
