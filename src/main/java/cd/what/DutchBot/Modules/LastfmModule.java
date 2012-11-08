@@ -444,12 +444,6 @@ public class LastfmModule extends ModuleAbstract implements
 					response.append(" - ");
 					response.append(t.getName());
 
-					// from the album xyz
-					if (t.getAlbum() != null && t.getAlbum().trim() != "") {
-						response.append(" from the album ");
-						response.append(t.getAlbum());
-					}
-
 					// plays
 					if (fetchedTrack.getUserPlaycount() > 1) {
 						response.append(" (")
