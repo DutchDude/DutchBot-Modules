@@ -125,6 +125,9 @@ public class LastfmModule extends ModuleAbstract implements
 			String login, String hostname, String message) {
 		if (!AccessList.isAllowed(login, hostname, Privileges.USER))
 			return;
+        
+        login = login.toLowerCase();
+        hostname = hostname.toLowerCase();
 
 		// sanity checking
 		message = message.trim();
@@ -347,8 +350,8 @@ public class LastfmModule extends ModuleAbstract implements
 			CallableStatement stmt = dbc.getDb().prepareCall(
 					UPDATE_USERNAME_QUERY);
 			stmt.setString(1, lastfmnick);
-			stmt.setString(2, login);
-			stmt.setString(3, hostname);
+			stmt.setString(2, login.toLowerCase());
+			stmt.setString(3, hostname.toLowerCase());
 			stmt.execute();
 			if (stmt.getUpdateCount() != 1) {
 				// inserten
