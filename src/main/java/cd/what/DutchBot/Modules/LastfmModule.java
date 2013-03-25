@@ -484,7 +484,7 @@ public class LastfmModule extends ModuleAbstract implements
 					break;
 				}
 				
-				if(response..toString().trim().length() < 3)
+				if(response.toString().trim().length() < 3)
 				{
 					bot.sendMessage(target, "Error getting np information, lastfm returned an empty string or something.");
 				}
