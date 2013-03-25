@@ -302,7 +302,7 @@ public class LastfmModule extends ModuleAbstract implements
 							res = null;
 							errormsg = e.getMessage();
 						}
-						if (res == null) {
+						if (res == null || res.getScore() < 0) {
 							bot.sendMessage(channel,
 									"Error, could not use tasteometer on "
 											+ sender + " and "
@@ -482,6 +482,11 @@ public class LastfmModule extends ModuleAbstract implements
 
 					// can't really just do one.
 					break;
+				}
+				
+				if(response..toString().trim().length() < 3)
+				{
+					bot.sendMessage(target, "Error getting np information, lastfm returned an empty string or something.");
 				}
 
 				bot.sendMessage(target, response.toString());
