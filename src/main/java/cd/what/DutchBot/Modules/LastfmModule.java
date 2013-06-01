@@ -258,15 +258,23 @@ public class LastfmModule extends ModuleAbstract implements
 				final String lastfmnick = getLastfmNick(channel, sender, login,
 						hostname);
 				if (lastfmnick.equals("")) {
+                    System.out.println("compare: found user on ignore list, returning");
 					return;
 				}
 
 				Hostmask targethostmask = null;
 
 				try {
+                    if(bot.getChannel(channel) == null) {
+                        bot.join(channel);
+                        System.out.println("tried to join channel");
+                    }
 					if (bot.getChannel(channel).getUser(compareWithNick) != null)
 						targethostmask = bot.getHostmask(compareWithNick);
+                    System.out.println("compare: Got targethostmask " + targethostmask);
 				} catch (IrcException e) {
+                    System.err.println("compare: Exception while getting hostmask: ");
+                    e.printStackTrace();
 					return;
 				}
 
@@ -274,6 +282,7 @@ public class LastfmModule extends ModuleAbstract implements
 				if (targethostmask != null)
 					target = getLastfmNick(channel, compareWithNick,
 							targethostmask.login, targethostmask.hostname);
+                System.out.println("compare: Got target lastfmnick: " + target);
 
 				if (target.equals("")) {
 					bot.sendNotice(
@@ -293,7 +302,8 @@ public class LastfmModule extends ModuleAbstract implements
 					public void run() {
 						ComparisonResult res = null;
 						String errormsg = "";
-						try {
+                        try {
+  						try {
 							res = Tasteometer.compare(
 									Tasteometer.InputType.USER, lastfmnick,
 									Tasteometer.InputType.USER, compareTarget,
@@ -301,21 +311,30 @@ public class LastfmModule extends ModuleAbstract implements
 						} catch (CallException e) {
 							res = null;
 							errormsg = e.getMessage();
+                            e.printStackTrace();
 						}
-						if (res == null || res.getScore() < 0) {
+						if (res == null) {
 							bot.sendMessage(channel,
 									"Error, could not use tasteometer on "
 											+ sender + " and "
 											+ compareWithNick + " " + errormsg);
 							return;
-						}
+						} else if (res.getScore() < 0) {
+                          bot.sendMessage(channel, "Error, could not use tasteometer on " + 
+                              sender + " and " + compareWithNick + " (subzero score returned by lfm)");
+                          System.out.println("compare: subzero score returned" );
+                          return;
+                        }
 						StringBuilder response = new StringBuilder(sender);
 						response.append(" and ")
 								.append(compareWithNick)
 								.append(" are ")
 								.append(Math.round(res.getScore() * 100))
-								.append("% compatible! Artists they have in common: ");
+								.append("% compatible!");
 						Collection<Artist> matches = res.getMatches();
+                        if(matches.size() > 0) {
+                          response.append(" Artists they have in common: ");
+                        }
 						for (Artist a : matches) {
 							response.append(a.getName()).append(", ");
 						}
@@ -325,6 +344,10 @@ public class LastfmModule extends ModuleAbstract implements
 									response.length(), ".");
 
 						bot.sendMessage(channel, response.toString());
+                        System.out.println("compare: Sent \"" + response + "\" to channel " + channel);
+                        } catch (NullPointerException ne) {
+                            bot.sendMessage(channel, "Something went wrong when comparing, try again later");
+                        }
 					}
 				});
 				t.start();
@@ -392,12 +415,17 @@ public class LastfmModule extends ModuleAbstract implements
 				Result lastResult = null;
 				try {
 					result = User.getRecentTracks(lastfmnick, 1, 1, true, apiKey);
-					lastResult = Caller.getInstance().getLastResult();
+                    lastResult = result.getResult();
 				} catch (CallException e) {
 					bot.sendMessage(target, "Error: " + e.getMessage());
-
+                    e.printStackTrace();
 					return;
-				}
+				} catch (NullPointerException e) {
+                    System.err.println("Nullpointerexception in fetching results!");
+                    System.err.println("User: " + lastfmnick + "\nlast Result: " + 
+                      Caller.getInstance().getLastResult().toString());
+                }
+
 				if (!lastResult.isSuccessful()) {
 					bot.sendMessage(target,
 							usernick + ": " + lastResult.getErrorMessage());
@@ -484,7 +512,7 @@ public class LastfmModule extends ModuleAbstract implements
 					break;
 				}
 				
-				if(response.toString().trim().length() < 3)
+				if(response.toString().trim().length() < 3 + usernick.length())
 				{
 					bot.sendMessage(target, "Error getting np information, lastfm returned an empty string or something.");
 				}
