@@ -94,7 +94,7 @@ public class QuitModule extends ModuleAbstract implements IChannelMessageEvent,
 			this.getBot().quitServer("BRB restart -- " + sender);
 			System.out.println("Shutdown invoked by: " + sender + "!" + login + "@"
 					+ hostname + " in " + source);
-			System.exit(1337);
+			System.exit(5);
 		}
 		
 		return;
