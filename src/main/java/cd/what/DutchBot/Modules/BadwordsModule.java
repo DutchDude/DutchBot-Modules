@@ -15,7 +15,7 @@
  * along with DutchBot.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author DutchDude
- * @copyright © 2012, DutchDude
+ * @copyright © 2013, DutchDude
  * 
  * You are encouraged to send any changes you make to this code to the
  * author. See http://github.com/DutchDude/DutchBot.git
@@ -52,7 +52,7 @@ import cd.what.DutchBot.Events.IChannelMessageEvent;
 public class BadwordsModule extends ModuleAbstract implements
 		IChannelMessageEvent {
 
-	public static int LIMIT = 4;
+	public static int LIMIT = 1;
 
 	private final ArrayList<String> badWords = new ArrayList<String>();
 	private final HashMap<String, Integer> hits = new HashMap<String, Integer>();
@@ -156,7 +156,7 @@ public class BadwordsModule extends ModuleAbstract implements
 					sender,
 					"You've said a word on the banlist! I will kick you if you do that "
 							+ (LIMIT - this.hits.get(key)) + " more times.");
-			if (this.hits.get(key) <= 0) {
+			if (this.hits.get(key) >= LIMIT) {
 				this.getBot().kick(channel, sender);
 			}
 			this.getBot()
