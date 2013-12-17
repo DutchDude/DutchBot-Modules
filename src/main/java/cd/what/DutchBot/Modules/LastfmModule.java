@@ -123,7 +123,7 @@ public class LastfmModule extends ModuleAbstract implements
 	@Override
 	public void notifyChannelMessageEvent(String channel, String sender,
 			String login, String hostname, String message) {
-		if (!AccessList.isAllowed(login, hostname, Privileges.USER))
+		if (!AccessList.isAllowed(login, hostname, Privileges.USER) || AccessList.isChannelAllowed(channel, Privileges.USER))
 			return;
         
         login = login.toLowerCase();
